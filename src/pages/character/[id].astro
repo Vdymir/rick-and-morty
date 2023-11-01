@@ -1,0 +1,65 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import {
+  getAllCharacters,
+  getCharacterById,
+} from "../../service/rickAndMortyAPI";
+
+export async function getStaticPaths() {
+  const allCharacters = await getAllCharacters();
+  return allCharacters.map((character) => ({
+    params: { id: character.id },
+  }));
+}
+const { id } = Astro.params;
+let character;
+character = await getCharacterById(id);
+---
+
+<Layout title={character.name}>
+  <section>
+    <img
+      src={character.image}
+      alt={character.name}
+      transition:name={`character-${character.id}`}
+    />
+    <div>
+      <h2 transition:name={`character-name-${character.id}`}>
+        {character.name}
+      </h2>
+      <p>Status: <span>{character.status}</span></p>
+      <p>specie: <span>{character.species}</span></p>
+      <p>Gender: <span>{character.gender}</span></p>
+      <p>Location: <span>{character.location.name}</span></p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  section {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  img {
+    width: 500px;
+    height: 600px;
+    border-radius: 4px;
+  }
+  h2 {
+    font-size: 52px;
+    margin: 0;
+  }
+  p {
+    font-size: 25px;
+    margin: 10px 0;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  span {
+    font-weight: 400;
+    text-transform: capitalize;
+  }
+</style>
